@@ -38,7 +38,11 @@ class Tree
 
   def insert(value)
     leaf = Node.new(value)
-    @root = priv_insert(leaf)
+    @root = priv_insert(leaf, @root)
+  end
+
+  def delete(value)
+    find_and_exec(value, @root, ->(node) { remove_and_replace(node) })
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -49,7 +53,20 @@ class Tree
 
   private
 
-  def priv_insert(leaf_node, node = @root)
+  def find_and_exec(value, node, block)
+    case value <=> node.data
+    when -1
+      node.left = find_and_exec(value, node.left, block)
+    when 0
+      # found the value, do whatever I want to do here
+      node = block.call(node)
+    when 1
+      node.right = find_and_exec(value, node.right, block)
+    end
+    node
+  end
+
+  def priv_insert(leaf_node, node)
     return leaf_node if node.nil?
 
     case leaf_node <=> node
@@ -62,9 +79,25 @@ class Tree
     end
     node
   end
+
+  def remove_and_replace(node)
+    if node.right.nil?
+      # do some stuff
+    end
+    second_lowest_node = node
+    lowest_node = node.right
+    until lowest_node.left.nil?
+      second_lowest_node = lowest_node
+      lowest_node = lowest_node.left
+    end
+    node.data = lowest_node.data
+    second_lowest_node.left = lowest_node.right
+    node
+  end
 end
 
-arr = [1, 2, 7, 4, 23, 8, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
+arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-x.insert(55)
+x.pretty_print
+x.delete(12)
 x.pretty_print
