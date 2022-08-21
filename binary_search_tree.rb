@@ -18,7 +18,7 @@ end
 
 # build tree class
 class Tree
-  attr_accessor :root
+  attr_reader :root
 
   def initialize(arr)
     arr.uniq!.sort!
@@ -43,7 +43,18 @@ class Tree
   end
 
   def delete(value)
-    find_and_replace(value, @root) { |node| remove_and_replace(node) }
+    @root = find_and_replace(value, @root) { |node| remove_and_replace(node) }
+  end
+
+  def find(value, node = @root)
+    case value <=> node.data
+    when -1
+      find(value, node.left)
+    when 0
+      node
+    when 1
+      find(value, node.right)
+    end
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -113,6 +124,5 @@ end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-x.pretty_print
-x.delete(14)
-x.pretty_print
+rand = x.find(12)
+x.pretty_print(rand)
