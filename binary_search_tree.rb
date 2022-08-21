@@ -38,11 +38,12 @@ class Tree
 
   def insert(value)
     leaf = Node.new(value)
+    # creating a private method prevents the user adding values without starting at root node
     @root = priv_insert(leaf, @root)
   end
 
   def delete(value)
-    find_and_exec(value, @root, ->(node) { remove_and_replace(node) })
+    find_and_replace(value, @root) { |node| remove_and_replace(node) }
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -53,15 +54,15 @@ class Tree
 
   private
 
-  def find_and_exec(value, node, block)
+  def find_and_replace(value, node, &block)
     case value <=> node.data
     when -1
-      node.left = find_and_exec(value, node.left, block)
+      node.left = find_and_replace(value, node.left, &block)
     when 0
       # found the value, do whatever I want to do here
       node = block.call(node)
     when 1
-      node.right = find_and_exec(value, node.right, block)
+      node.right = find_and_replace(value, node.right, &block)
     end
     node
   end
@@ -73,31 +74,45 @@ class Tree
     when -1
       node.left = priv_insert(leaf_node, node.left)
     when 0
-      puts 'Can not insert! Value already exists in tree'
+      puts 'Can not insert! Value already exists in tree.'
     when 1
       node.right = priv_insert(leaf_node, node.right)
     end
     node
   end
 
+  # three cases, node has no children, node has 1 child, or node has 2 children
+  # works with balanced or non-balanced tree
   def remove_and_replace(node)
     if node.right.nil?
-      # do some stuff
+      # no children
+      return nil if node.left.nil?
+
+      # left child only
+      closest_val_node = find_furthest_node(node.left, true)
+      block = proc { |edge_node| edge_node.left }
+    else
+      # right child only
+      closest_val_node = find_furthest_node(node.right, false)
+      block = proc { |edge_node| edge_node.right }
     end
-    second_lowest_node = node
-    lowest_node = node.right
-    until lowest_node.left.nil?
-      second_lowest_node = lowest_node
-      lowest_node = lowest_node.left
-    end
-    node.data = lowest_node.data
-    second_lowest_node.left = lowest_node.right
+    # finds the closest node to the input node
+    node = find_and_replace(closest_val_node.data, node, &block)
+    node.data = closest_val_node.data
     node
+  end
+
+  # finds furthest node from given node in declared direction
+  def find_furthest_node(node, right)
+    next_node = (right ? node.right : node.left)
+    return node if next_node.nil?
+
+    find_furthest_node(next_node, right)
   end
 end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
 x.pretty_print
-x.delete(12)
+x.delete(14)
 x.pretty_print
