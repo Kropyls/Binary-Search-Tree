@@ -46,7 +46,7 @@ class Tree # rubocop:disable Metrics/ClassLength
     @root = find_and_replace(value, @root) { |node| remove_and_replace(node) }
   end
 
-  def find(value, node = @root)
+  def find(value, node = root)
     case value <=> node.data
     when -1
       find(value, node.left)
@@ -57,7 +57,7 @@ class Tree # rubocop:disable Metrics/ClassLength
     end
   end
 
-  def level_order(input_node = @root)
+  def level_order(input_node = root)
     queue = Queue.new([input_node])
     array = []
     until queue.empty?
@@ -99,6 +99,25 @@ class Tree # rubocop:disable Metrics/ClassLength
 
     block_given? ? array.push(block.call(node)) : array.push(node.data)
     array
+  end
+
+  def height(node = root)
+    return 0 if node.nil?
+
+    left = height(node.left) + 1
+    right = height(node.right) + 1
+    left > right ? left : right
+  end
+
+  def depth(node, start = root)
+    case node <=> start
+    when -1
+      1 + depth(node, start.left)
+    when 0
+      0
+    when 1
+      1 + depth(node, start.right)
+    end
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -147,7 +166,7 @@ class Tree # rubocop:disable Metrics/ClassLength
       closest_val_node = find_furthest_node(node.left, true)
       block = proc { |edge_node| edge_node.left }
     else
-      # right child only
+      # right child or two children
       closest_val_node = find_furthest_node(node.right, false)
       block = proc { |edge_node| edge_node.right }
     end
@@ -168,5 +187,7 @@ end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-y = x.postorder
-p y
+y = Node.new(15)
+x.pretty_print
+h = x.depth(y)
+p h
