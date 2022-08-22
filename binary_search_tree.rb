@@ -120,6 +120,18 @@ class Tree # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def balanced?(node = root)
+    return true if node.nil?
+
+    left = height(node.left)
+    right = height(node.right)
+
+    (left - right).between?(-1, 1) && balanced?(node.left) && balanced?(node.right)
+  end
+
+  def rebalance(node = root)
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -187,7 +199,11 @@ end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-y = Node.new(15)
 x.pretty_print
-h = x.depth(y)
-p h
+puts x.balanced?
+x.delete(14)
+x.delete(15)
+x.insert(14)
+x.insert(15)
+x.pretty_print
+puts x.balanced?
