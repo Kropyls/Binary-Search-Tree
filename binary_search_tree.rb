@@ -71,6 +71,36 @@ class Tree
     array
   end
 
+  def inorder(node = root, &block)
+    array = []
+    array.push(*inorder(node.left, &block)) unless node.left.nil?
+
+    block_given? ? array.push(block.call(node)) : array.push(node.data)
+
+    array.push(*inorder(node.right, &block)) unless node.right.nil?
+    array
+  end
+
+  def preorder(node = root, &block)
+    array = []
+    block_given? ? array.push(block.call(node)) : array.push(node.data)
+
+    array.push(*preorder(node.left, &block)) unless node.left.nil?
+
+    array.push(*preorder(node.right, &block)) unless node.right.nil?
+    array
+  end
+
+  def postorder(node = root, &block)
+    array = []
+    array.push(*postorder(node.left, &block)) unless node.left.nil?
+
+    array.push(*postorder(node.right, &block)) unless node.right.nil?
+
+    block_given? ? array.push(block.call(node)) : array.push(node.data)
+    array
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -138,5 +168,5 @@ end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-y = x.level_order
+y = x.postorder
 p y
