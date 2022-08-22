@@ -57,6 +57,20 @@ class Tree
     end
   end
 
+  def level_order(input_node = @root)
+    queue = Queue.new([input_node])
+    array = []
+    until queue.empty?
+      node = queue.pop
+      next if node.nil?
+
+      block_given? ? array.push(yield node) : array.push(node.data)
+      queue.push(node.left)
+      queue.push(node.right)
+    end
+    array
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -124,5 +138,5 @@ end
 
 arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
 x = Tree.new(arr)
-rand = x.find(12)
-x.pretty_print(rand)
+y = x.level_order
+p y
