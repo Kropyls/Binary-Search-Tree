@@ -16,8 +16,8 @@ class Node
   end
 end
 
-# build tree class
-class Tree
+# Class that holds the binary seach tree and its associated methods
+class Tree # rubocop:disable Metrics/ClassLength
   attr_reader :root
 
   def initialize(arr)
