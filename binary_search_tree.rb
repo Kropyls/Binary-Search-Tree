@@ -130,7 +130,7 @@ class Tree # rubocop:disable Metrics/ClassLength
   end
 
   def rebalance
-    @root = build_tree(self.inorder)
+    @root = build_tree(inorder)
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -197,13 +197,3 @@ class Tree # rubocop:disable Metrics/ClassLength
     find_furthest_node(next_node, right)
   end
 end
-
-arr = [1, 2, 7, 4, 23, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,24, 25, 26, 27, 28, 29, 30, 6, 9, 4, 55, 3, 5, 7, 9, 67, 6345, 324]
-x = Tree.new(arr)
-x.delete(14)
-x.delete(15)
-x.insert(14)
-x.insert(15)
-x.pretty_print
-x.rebalance
-x.pretty_print
