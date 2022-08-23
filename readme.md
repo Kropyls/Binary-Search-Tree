@@ -1,1 +1,1 @@
-my take on the binary seach tree data structure
+my take on the binary seach tree data structure. Contains common methods associated with the data structure.
