@@ -21,7 +21,7 @@ class Tree # rubocop:disable Metrics/ClassLength
   attr_reader :root
 
   def initialize(arr)
-    arr.uniq!.sort!
+    arr = arr.uniq.sort
     @root = build_tree(arr)
   end
 
